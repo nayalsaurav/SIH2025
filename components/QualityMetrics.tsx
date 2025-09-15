@@ -1,5 +1,5 @@
-import React from 'react';
-import { Droplets, Award, Leaf } from 'lucide-react';
+import React from "react";
+import { Droplets, Award, Leaf } from "lucide-react";
 
 interface QualityMetricsProps {
   metrics: {
@@ -7,11 +7,18 @@ interface QualityMetricsProps {
     purity: number;
     maturity: string;
   };
-  onChange: (metrics: { moisture: number; purity: number; maturity: string }) => void;
+  onChange: (metrics: {
+    moisture: number;
+    purity: number;
+    maturity: string;
+  }) => void;
 }
 
-const QualityMetrics: React.FC<QualityMetricsProps> = ({ metrics, onChange }) => {
-  const maturityOptions = ['immature', 'optimal', 'mature', 'over-mature'];
+const QualityMetrics: React.FC<QualityMetricsProps> = ({
+  metrics,
+  onChange,
+}) => {
+  const maturityOptions = ["immature", "optimal", "mature", "over-mature"];
 
   return (
     <div className="space-y-4">
@@ -33,17 +40,24 @@ const QualityMetrics: React.FC<QualityMetricsProps> = ({ metrics, onChange }) =>
             max="20"
             step="0.1"
             value={metrics.moisture}
-            onChange={(e) => onChange({ ...metrics, moisture: parseFloat(e.target.value) })}
+            onChange={(e) =>
+              onChange({ ...metrics, moisture: parseFloat(e.target.value) })
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
           />
           <div className="mt-1">
             <div className={`w-full bg-gray-200 rounded-full h-2`}>
               <div
                 className={`h-2 rounded-full ${
-                  metrics.moisture <= 10 ? 'bg-green-500' :
-                  metrics.moisture <= 15 ? 'bg-yellow-500' : 'bg-red-500'
+                  metrics.moisture <= 10
+                    ? "bg-green-500"
+                    : metrics.moisture <= 15
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
                 }`}
-                style={{ width: `${Math.min(metrics.moisture / 20 * 100, 100)}%` }}
+                style={{
+                  width: `${Math.min((metrics.moisture / 20) * 100, 100)}%`,
+                }}
               ></div>
             </div>
             <p className="text-xs text-gray-500 mt-1">Optimal: 10%</p>
@@ -62,15 +76,20 @@ const QualityMetrics: React.FC<QualityMetricsProps> = ({ metrics, onChange }) =>
             max="100"
             step="1"
             value={metrics.purity}
-            onChange={(e) => onChange({ ...metrics, purity: parseFloat(e.target.value) })}
+            onChange={(e) =>
+              onChange({ ...metrics, purity: parseFloat(e.target.value) })
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
           />
           <div className="mt-1">
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
                 className={`h-2 rounded-full ${
-                  metrics.purity >= 90 ? 'bg-green-500' :
-                  metrics.purity >= 80 ? 'bg-yellow-500' : 'bg-red-500'
+                  metrics.purity >= 90
+                    ? "bg-green-500"
+                    : metrics.purity >= 80
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
                 }`}
                 style={{ width: `${metrics.purity}%` }}
               ></div>
@@ -90,17 +109,21 @@ const QualityMetrics: React.FC<QualityMetricsProps> = ({ metrics, onChange }) =>
             onChange={(e) => onChange({ ...metrics, maturity: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
           >
-            {maturityOptions.map(option => (
+            {maturityOptions.map((option) => (
               <option key={option} value={option}>
-                {option.charAt(0).toUpperCase() + option.slice(1).replace('-', ' ')}
+                {option.charAt(0).toUpperCase() +
+                  option.slice(1).replace("-", " ")}
               </option>
             ))}
           </select>
           <p className="text-xs text-gray-500 mt-1">
-            {metrics.maturity === 'optimal' ? '\u2713 Perfect harvest time' :
-             metrics.maturity === 'mature' ? '\u26a0 Good quality' :
-             metrics.maturity === 'immature' ? '\u26a0 Early harvest' :
-             '\u26a0 Late harvest'}
+            {metrics.maturity === "optimal"
+              ? "\u2713 Perfect harvest time"
+              : metrics.maturity === "mature"
+                ? "\u26a0 Good quality"
+                : metrics.maturity === "immature"
+                  ? "\u26a0 Early harvest"
+                  : "\u26a0 Late harvest"}
           </p>
         </div>
       </div>

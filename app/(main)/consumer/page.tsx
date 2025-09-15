@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import Tilt from 'react-parallax-tilt';
-import { QrCode, Search, History, Shield } from 'lucide-react';
-import { useBlockchain } from '../../../src/context/BlockchainContext';
-import { formatDate } from '../../../src/utils/helpers';
-import QRCodeDisplay from '../../../src/components/QRCodeDisplay';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import Tilt from "react-parallax-tilt";
+import { QrCode, Search, History, Shield } from "lucide-react";
+import { useBlockchain } from "@/context/BlockchainContext";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
+import { formatDate } from "@/lib/helpers";
 
-const glass = 'backdrop-blur-lg bg-white/60 dark:bg-zinc-900/60 border border-white/30 dark:border-zinc-800/30 shadow-2xl';
+const glass =
+  "backdrop-blur-lg bg-white/60 dark:bg-zinc-900/60 border border-white/30 dark:border-zinc-800/30 shadow-2xl";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40, scale: 0.96 },
@@ -18,14 +19,15 @@ const fadeUp = {
     scale: 1,
     transition: {
       duration: 0.6,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 } as const;
 
 function ConsumerPortal() {
-  const { products, collections, qualityTests, processingSteps } = useBlockchain();
-  const [searchId, setSearchId] = useState('');
+  const { products, collections, qualityTests, processingSteps } =
+    useBlockchain();
+  const [searchId, setSearchId] = useState("");
   const [searchResult, setSearchResult] = useState<any>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
@@ -38,7 +40,7 @@ function ConsumerPortal() {
         setSearchHistory((prev) => [searchId, ...prev.slice(0, 4)]);
       }
     } else {
-      alert('Product not found. Please check the ID and try again.');
+      alert("Product not found. Please check the ID and try again.");
     }
   };
 
@@ -53,7 +55,9 @@ function ConsumerPortal() {
       score += Math.min(test.testResults.alkaloidContent * 10, 10);
       return score;
     });
-    return Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length);
+    return Math.round(
+      scores.reduce((a: number, b: number) => a + b, 0) / scores.length,
+    );
   };
 
   return (
@@ -146,14 +150,16 @@ function ConsumerPortal() {
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-wrap gap-2">
-                      {searchResult.finalQuality.certifications.map((cert: string) => (
-                        <span
-                          key={cert}
-                          className="px-3 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300"
-                        >
-                          {cert}
-                        </span>
-                      ))}
+                      {searchResult.finalQuality.certifications.map(
+                        (cert: string) => (
+                          <span
+                            key={cert}
+                            className="px-3 py-1 text-xs rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300"
+                          >
+                            {cert}
+                          </span>
+                        ),
+                      )}
                     </div>
                   </div>
                 </div>
@@ -223,7 +229,7 @@ function ConsumerPortal() {
                       {step.step}
                     </h4>
                     <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      Conditions: {step.conditions.temperature}°C,{' '}
+                      Conditions: {step.conditions.temperature}°C,{" "}
                       {step.conditions.humidity}% RH
                     </p>
                     <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">

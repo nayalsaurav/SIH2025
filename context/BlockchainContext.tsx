@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { generateId } from '../utils/helpers';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { generateId } from "../lib/helpers";
 
 export interface CollectionEvent {
   id: string;
@@ -80,26 +80,38 @@ interface BlockchainContextType {
   collections: CollectionEvent[];
   qualityTests: QualityTest[];
   processingSteps: ProcessingStep[];
-  addCollectionEvent: (event: Omit<CollectionEvent, 'id' | 'blockHash' | 'validated'>) => string;
-  addQualityTest: (test: Omit<QualityTest, 'id' | 'blockHash' | 'validated'>) => string;
-  addProcessingStep: (step: Omit<ProcessingStep, 'id' | 'blockHash' | 'validated'>) => string;
-  createProduct: (product: Omit<Product, 'id' | 'qrCode' | 'blockHash'>) => string;
+  addCollectionEvent: (
+    event: Omit<CollectionEvent, "id" | "blockHash" | "validated">,
+  ) => string;
+  addQualityTest: (
+    test: Omit<QualityTest, "id" | "blockHash" | "validated">,
+  ) => string;
+  addProcessingStep: (
+    step: Omit<ProcessingStep, "id" | "blockHash" | "validated">,
+  ) => string;
+  createProduct: (
+    product: Omit<Product, "id" | "qrCode" | "blockHash">,
+  ) => string;
   getProductById: (id: string) => Product | undefined;
   getProductByQR: (qrCode: string) => Product | undefined;
   validateSmartContract: (data: any) => boolean;
 }
 
-const BlockchainContext = createContext<BlockchainContextType | undefined>(undefined);
+const BlockchainContext = createContext<BlockchainContextType | undefined>(
+  undefined,
+);
 
 export const useBlockchain = () => {
   const context = useContext(BlockchainContext);
   if (context === undefined) {
-    throw new Error('useBlockchain must be used within a BlockchainProvider');
+    throw new Error("useBlockchain must be used within a BlockchainProvider");
   }
   return context;
 };
 
-export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<CollectionEvent[]>([]);
   const [qualityTests, setQualityTests] = useState<QualityTest[]>([]);
@@ -119,21 +131,23 @@ export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({ children
         return false; // Outside India bounds
       }
     }
-    
+
     // Seasonal validation (example: some herbs only in winter)
     const month = new Date(data.timestamp).getMonth();
-    if (data.species === 'Ashwagandha' && (month < 10 || month > 2)) {
+    if (data.species === "Ashwagandha" && (month < 10 || month > 2)) {
       return false; // Winter harvest only
     }
 
     return true;
   };
 
-  const addCollectionEvent = (eventData: Omit<CollectionEvent, 'id' | 'blockHash' | 'validated'>): string => {
+  const addCollectionEvent = (
+    eventData: Omit<CollectionEvent, "id" | "blockHash" | "validated">,
+  ): string => {
     const id = generateId();
     const validated = validateSmartContract(eventData);
     const blockHash = generateBlockHash({ ...eventData, id });
-    
+
     const event: CollectionEvent = {
       ...eventData,
       id,
@@ -141,15 +155,17 @@ export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({ children
       validated,
     };
 
-    setCollections(prev => [...prev, event]);
+    setCollections((prev) => [...prev, event]);
     return id;
   };
 
-  const addQualityTest = (testData: Omit<QualityTest, 'id' | 'blockHash' | 'validated'>): string => {
+  const addQualityTest = (
+    testData: Omit<QualityTest, "id" | "blockHash" | "validated">,
+  ): string => {
     const id = generateId();
     const validated = validateSmartContract(testData);
     const blockHash = generateBlockHash({ ...testData, id });
-    
+
     const test: QualityTest = {
       ...testData,
       id,
@@ -157,15 +173,17 @@ export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({ children
       validated,
     };
 
-    setQualityTests(prev => [...prev, test]);
+    setQualityTests((prev) => [...prev, test]);
     return id;
   };
 
-  const addProcessingStep = (stepData: Omit<ProcessingStep, 'id' | 'blockHash' | 'validated'>): string => {
+  const addProcessingStep = (
+    stepData: Omit<ProcessingStep, "id" | "blockHash" | "validated">,
+  ): string => {
     const id = generateId();
     const validated = validateSmartContract(stepData);
     const blockHash = generateBlockHash({ ...stepData, id });
-    
+
     const step: ProcessingStep = {
       ...stepData,
       id,
@@ -173,15 +191,17 @@ export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({ children
       validated,
     };
 
-    setProcessingSteps(prev => [...prev, step]);
+    setProcessingSteps((prev) => [...prev, step]);
     return id;
   };
 
-  const createProduct = (productData: Omit<Product, 'id' | 'qrCode' | 'blockHash'>): string => {
+  const createProduct = (
+    productData: Omit<Product, "id" | "qrCode" | "blockHash">,
+  ): string => {
     const id = generateId();
     const qrCode = `QR${id.slice(0, 8).toUpperCase()}`;
     const blockHash = generateBlockHash({ ...productData, id, qrCode });
-    
+
     const product: Product = {
       ...productData,
       id,
@@ -189,32 +209,34 @@ export const BlockchainProvider: React.FC<{ children: ReactNode }> = ({ children
       blockHash,
     };
 
-    setProducts(prev => [...prev, product]);
+    setProducts((prev) => [...prev, product]);
     return id;
   };
 
   const getProductById = (id: string): Product | undefined => {
-    return products.find(p => p.id === id);
+    return products.find((p) => p.id === id);
   };
 
   const getProductByQR = (qrCode: string): Product | undefined => {
-    return products.find(p => p.qrCode === qrCode);
+    return products.find((p) => p.qrCode === qrCode);
   };
 
   return (
-    <BlockchainContext.Provider value={{
-      products,
-      collections,
-      qualityTests,
-      processingSteps,
-      addCollectionEvent,
-      addQualityTest,
-      addProcessingStep,
-      createProduct,
-      getProductById,
-      getProductByQR,
-      validateSmartContract,
-    }}>
+    <BlockchainContext.Provider
+      value={{
+        products,
+        collections,
+        qualityTests,
+        processingSteps,
+        addCollectionEvent,
+        addQualityTest,
+        addProcessingStep,
+        createProduct,
+        getProductById,
+        getProductByQR,
+        validateSmartContract,
+      }}
+    >
       {children}
     </BlockchainContext.Provider>
   );

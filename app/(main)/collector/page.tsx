@@ -1,15 +1,22 @@
 "use client";
 import React, { useState } from "react";
 import {
-  MapPin, Leaf, Camera, Wifi, WifiOff, CheckCircle, Clock,
+  MapPin,
+  Leaf,
+  Camera,
+  Wifi,
+  WifiOff,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Tilt from "react-parallax-tilt";
-import { useBlockchain } from "../../../src/context/BlockchainContext";
-import LocationPicker from "../../../src/components/LocationPicker";
-import QualityMetrics from "../../../src/components/QualityMetrics";
+import { useBlockchain } from "@/context/BlockchainContext";
+import LocationPicker from "@/components/LocationPicker";
+import QualityMetrics from "@/components/QualityMetrics";
 
-const glass = "backdrop-blur-xl bg-white/75 dark:bg-zinc-900/80 border border-white/25 dark:border-zinc-800/30 shadow-xl";
+const glass =
+  "backdrop-blur-xl bg-white/75 dark:bg-zinc-900/80 border border-white/25 dark:border-zinc-800/30 shadow-xl";
 
 function CollectorDashboard() {
   const { addCollectionEvent, collections } = useBlockchain();
@@ -33,7 +40,11 @@ function CollectorDashboard() {
     "Amla (Phyllanthus emblica)",
   ];
 
-  const handleLocationSelect = (location: { latitude: number; longitude: number; address: string }) => {
+  const handleLocationSelect = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
     setCollectionData((prev) => ({ ...prev, location }));
   };
 
@@ -47,13 +58,15 @@ function CollectorDashboard() {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 1800);
     setCollectionData((prev) => ({
-      ...prev, species: "", quantity: 0,
+      ...prev,
+      species: "",
+      quantity: 0,
       qualityMetrics: { moisture: 8, purity: 95, maturity: "optimal" },
     }));
   };
 
   const myCollections = collections.filter(
-    (c) => c.collectorId === collectionData.collectorId
+    (c) => c.collectorId === collectionData.collectorId,
   );
 
   return (
@@ -83,7 +96,9 @@ function CollectorDashboard() {
             transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
             className={
               "w-3 h-3 rounded-full " +
-              (isOnline ? "bg-green-300 shadow-green-400" : "bg-red-300 shadow-red-500")
+              (isOnline
+                ? "bg-green-300 shadow-green-400"
+                : "bg-red-300 shadow-red-500")
             }
           />
           {isOnline ? (
@@ -154,7 +169,9 @@ function CollectorDashboard() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Quantity (kg)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Quantity (kg)
+            </label>
             <input
               type="number"
               step="0.1"
@@ -197,7 +214,11 @@ function CollectorDashboard() {
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.97 }}
             type="submit"
-            disabled={!collectionData.species || !collectionData.location.address || !isOnline}
+            disabled={
+              !collectionData.species ||
+              !collectionData.location.address ||
+              !isOnline
+            }
             className="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition"
           >
             Record Collection Event
@@ -217,7 +238,10 @@ function CollectorDashboard() {
           {myCollections.map((collection) => (
             <Tilt key={collection.id} tiltMaxAngleX={10} tiltMaxAngleY={10}>
               <motion.div
-                whileHover={{ scale: 1.025, boxShadow: "0 4px 18px 0 #22c55e29" }}
+                whileHover={{
+                  scale: 1.025,
+                  boxShadow: "0 4px 18px 0 #22c55e29",
+                }}
                 className="border border-gray-200 bg-white/80 dark:bg-zinc-900/80 rounded-xl p-5 shadow hover:shadow-green-200/30 transition"
               >
                 <div className="flex justify-between items-center mb-3">
@@ -242,8 +266,12 @@ function CollectorDashboard() {
                 <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
                   <p>📦 Quantity: {collection.quantity} kg</p>
                   <p>📍 Location: {collection.location.address}</p>
-                  <p>🌱 Sustainability Score: {collection.sustainabilityScore}%</p>
-                  <p className="truncate">🔗 Block Hash: {collection.blockHash}</p>
+                  <p>
+                    🌱 Sustainability Score: {collection.sustainabilityScore}%
+                  </p>
+                  <p className="truncate">
+                    🔗 Block Hash: {collection.blockHash}
+                  </p>
                 </div>
               </motion.div>
             </Tilt>
@@ -257,7 +285,7 @@ function CollectorDashboard() {
       </motion.div>
     </div>
   );
-};
+}
 
 export default function Page() {
   return <CollectorDashboard />;

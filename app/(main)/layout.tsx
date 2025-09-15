@@ -1,7 +1,7 @@
 "use client";
 
 import { Navbar } from "@/components/navbar";
-import { BlockchainProvider } from "../../src/context/BlockchainContext";
+import { BlockchainProvider } from "@/context/BlockchainContext";
 
 export default function MainLayout({
   children,

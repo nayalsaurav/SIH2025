@@ -1,46 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Crosshair } from 'lucide-react';
-import { getLocationString } from '../utils/helpers';
+"use client";
+import React, { useState, useEffect } from "react";
+import { MapPin, Crosshair } from "lucide-react";
+import { getLocationString } from "@/lib/helpers";
 
 interface LocationPickerProps {
-  onLocationSelect: (location: { latitude: number; longitude: number; address: string }) => void;
+  onLocationSelect: (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => void;
 }
 
-const LocationPicker: React.FC<LocationPickerProps> = ({ onLocationSelect }) => {
+const LocationPicker: React.FC<LocationPickerProps> = ({
+  onLocationSelect,
+}) => {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   const getCurrentLocation = () => {
     setIsGettingLocation(true);
-    
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           const address = getLocationString(latitude, longitude);
-          
+
           setCurrentLocation({ latitude, longitude });
           onLocationSelect({ latitude, longitude, address });
           setIsGettingLocation(false);
         },
         (error) => {
-          console.error('Error getting location:', error);
+          console.error("Error getting location:", error);
           // Fallback to mock location for demo
           const latitude = 20.5937 + (Math.random() - 0.5) * 10;
           const longitude = 78.9629 + (Math.random() - 0.5) * 15;
           const address = getLocationString(latitude, longitude);
-          
+
           setCurrentLocation({ latitude, longitude });
           onLocationSelect({ latitude, longitude, address });
           setIsGettingLocation(false);
-        }
+        },
       );
     } else {
       // Fallback to mock location
       const latitude = 20.5937 + (Math.random() - 0.5) * 10;
       const longitude = 78.9629 + (Math.random() - 0.5) * 15;
       const address = getLocationString(latitude, longitude);
-      
+
       setCurrentLocation({ latitude, longitude });
       onLocationSelect({ latitude, longitude, address });
       setIsGettingLocation(false);
@@ -75,7 +85,8 @@ const LocationPicker: React.FC<LocationPickerProps> = ({ onLocationSelect }) => 
             <span className="text-sm font-medium">Location Captured</span>
           </div>
           <div className="text-sm text-blue-600 mt-1">
-            Lat: {currentLocation.latitude.toFixed(6)}, Lng: {currentLocation.longitude.toFixed(6)}
+            Lat: {currentLocation.latitude.toFixed(6)}, Lng:{" "}
+            {currentLocation.longitude.toFixed(6)}
           </div>
         </div>
       )}

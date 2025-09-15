@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Microscope, TestTube, Award, AlertCircle } from 'lucide-react';
-import { useBlockchain } from '../../../src/context/BlockchainContext';
-import { formatDate } from '../../../src/utils/helpers';
-import QualityMetrics from './components/QualityMetrics';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Microscope, TestTube, Award, AlertCircle } from "lucide-react";
+import { useBlockchain } from "@/context/BlockchainContext";
+import { formatDate } from "@/lib/helpers";
+import QualityMetrics from "./components/QualityMetrics";
 
-const glass = 'backdrop-blur-lg bg-white/60 dark:bg-zinc-900/60 border border-white/30 dark:border-zinc-800/30 shadow-2xl';
+const glass =
+  "backdrop-blur-lg bg-white/60 dark:bg-zinc-900/60 border border-white/30 dark:border-zinc-800/30 shadow-2xl";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40, scale: 0.96 },
@@ -17,26 +18,26 @@ const fadeUp = {
     scale: 1,
     transition: {
       duration: 0.6,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 } as const;
 
 function LabDashboard() {
   const { qualityTests, collections, addQualityTest } = useBlockchain();
   const [testData, setTestData] = useState({
-    labId: 'LAB001',
-    labName: 'Ayurvedic Research Lab',
-    collectionEventId: '',
+    labId: "LAB001",
+    labName: "Ayurvedic Research Lab",
+    collectionEventId: "",
     testResults: {
       moisture: 0,
       pesticideLevel: 0,
       dnaAuthenticity: false,
       heavyMetals: 0,
-      microbialLoad: 0
+      microbialLoad: 0,
     },
-    certification: 'AYUSH-CERTIFIED',
-    notes: '',
+    certification: "AYUSH-CERTIFIED",
+    notes: "",
   });
 
   const handleAddTest = (e: React.FormEvent) => {
@@ -48,22 +49,22 @@ function LabDashboard() {
     alert(`Quality test recorded with ID: ${testId}`);
     setTestData((prev) => ({
       ...prev,
-      collectionEventId: '',
+      collectionEventId: "",
       testResults: {
         moisture: 0,
         pesticideLevel: 0,
         dnaAuthenticity: false,
         heavyMetals: 0,
-        microbialLoad: 0
+        microbialLoad: 0,
       },
-      certification: 'AYUSH-CERTIFIED',
-      notes: '',
+      certification: "AYUSH-CERTIFIED",
+      notes: "",
     }));
   };
 
   const pendingCollections = collections.filter(
     (collection) =>
-      !qualityTests.some((test) => test.collectionEventId === collection.id)
+      !qualityTests.some((test) => test.collectionEventId === collection.id),
   );
 
   return (
@@ -216,8 +217,6 @@ function LabDashboard() {
                   </span>
                 </label>
               </div>
-
-
             </div>
 
             <div>
@@ -263,7 +262,7 @@ function LabDashboard() {
           <div className="space-y-4">
             {qualityTests.slice(-5).map((test, idx) => {
               const collection = collections.find(
-                (c) => c.id === test.collectionEventId
+                (c) => c.id === test.collectionEventId,
               );
               return (
                 <motion.div
@@ -275,36 +274,36 @@ function LabDashboard() {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-emerald-900 dark:text-emerald-300">
-                      {collection?.species || 'Unknown Species'}
+                      {collection?.species || "Unknown Species"}
                     </h3>
                     <span
                       className={`text-xs px-2.5 py-1 rounded-full ${
                         test.validated
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {test.validated ? 'Validated' : 'Pending'}
+                      {test.validated ? "Validated" : "Pending"}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm text-zinc-700 dark:text-zinc-300">
                     <div className="space-y-1">
                       <p>
-                        DNA Auth:{' '}
-                        {test.testResults.dnaAuthenticity ? '✓' : '✗'}
+                        DNA Auth: {test.testResults.dnaAuthenticity ? "✓" : "✗"}
                       </p>
                       <p>
-                        Pesticide Level:{' '}
-                        {test.testResults.pesticideLevel > 0 ? '⚠️' : '✓'}
+                        Pesticide Level:{" "}
+                        {test.testResults.pesticideLevel > 0 ? "⚠️" : "✓"}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p>
-                        Heavy Metals:{' '}
-                        {test.testResults.heavyMetals > 0 ? '⚠️' : '✓'}
+                        Heavy Metals:{" "}
+                        {test.testResults.heavyMetals > 0 ? "⚠️" : "✓"}
                       </p>
                       <p>
-                        Microbial Load: {test.testResults.microbialLoad > 0 ? '⚠️' : '✓'}
+                        Microbial Load:{" "}
+                        {test.testResults.microbialLoad > 0 ? "⚠️" : "✓"}
                       </p>
                     </div>
                   </div>
@@ -330,7 +329,7 @@ function LabDashboard() {
           </span>
           Quality Metrics Overview
         </h2>
-  <QualityMetrics qualityTests={qualityTests} />
+        <QualityMetrics qualityTests={qualityTests} />
       </motion.div>
     </motion.div>
   );
