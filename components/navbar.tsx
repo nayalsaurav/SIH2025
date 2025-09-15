@@ -12,7 +12,14 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session, isPending, error } = authClient.useSession();
 
-  const navLinks = !session
+  const mainNavLinks = [
+    { href: "/lab", label: "Laboratory", variant: "ghost" },
+    { href: "/collector", label: "Collector", variant: "ghost" },
+    { href: "/processor", label: "Processor", variant: "ghost" },
+    { href: "/consumer", label: "Consumer", variant: "ghost" },
+  ];
+
+  const authNavLinks = !session
     ? [
         { href: "/sign-in", label: "Sign In", variant: "ghost" },
         { href: "/sign-up", label: "Get Started", variant: "default" },
@@ -37,29 +44,43 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-3">
-            {isPending ? (
-              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-            ) : error ? (
-              <span className="text-sm text-red-500">Error loading</span>
-            ) : session?.user ? (
-              <UserDropdown user={session.user} /> // ✅ dropdown for logged-in users
-            ) : (
-              navLinks.map(({ href, label, variant }) => (
+          <div className="hidden md:flex items-center space-x-6">
+            {/* Main Navigation */}
+            <div className="flex items-center space-x-2">
+              {mainNavLinks.map(({ href, label }) => (
                 <Link key={href} href={href}>
-                  <Button
-                    variant={variant === "ghost" ? "ghost" : "default"}
-                    className={
-                      variant === "default"
-                        ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                        : "text-foreground"
-                    }
-                  >
+                  <Button variant="ghost" className="text-foreground">
                     {label}
                   </Button>
                 </Link>
-              ))
-            )}
+              ))}
+            </div>
+
+            {/* Auth Section */}
+            <div className="flex items-center space-x-3 border-l pl-6 border-border">
+              {isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+              ) : error ? (
+                <span className="text-sm text-red-500">Error loading</span>
+              ) : session?.user ? (
+                <UserDropdown user={session.user} />
+              ) : (
+                authNavLinks.map(({ href, label, variant }) => (
+                  <Link key={href} href={href}>
+                    <Button
+                      variant={variant === "ghost" ? "ghost" : "default"}
+                      className={
+                        variant === "default"
+                          ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                          : "text-foreground"
+                      }
+                    >
+                      {label}
+                    </Button>
+                  </Link>
+                ))
+              )}
+            </div>
           </div>
 
           {/* Mobile Hamburger */}
@@ -89,31 +110,47 @@ export const Navbar = () => {
               transition={{ duration: 0.2 }}
               className="md:hidden mt-4 flex flex-col space-y-2"
             >
-              {isPending ? (
-                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground self-center" />
-              ) : error ? (
-                <span className="text-sm text-red-500 self-center">
-                  Error loading
-                </span>
-              ) : session?.user ? (
-                // On mobile we show dropdown trigger only
-                <UserDropdown user={session.user} />
-              ) : (
-                navLinks.map(({ href, label, variant }) => (
+              {/* Main Navigation */}
+              <div className="space-y-2 mb-4">
+                {mainNavLinks.map(({ href, label }) => (
                   <Link key={href} href={href}>
                     <Button
-                      variant={variant === "ghost" ? "ghost" : "default"}
-                      className={`w-full justify-start ${
-                        variant === "default"
-                          ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                          : "text-foreground"
-                      }`}
+                      variant="ghost"
+                      className="w-full justify-start text-foreground"
                     >
                       {label}
                     </Button>
                   </Link>
-                ))
-              )}
+                ))}
+              </div>
+
+              {/* Auth Section */}
+              <div className="space-y-2 pt-4 border-t border-border">
+                {isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin text-muted-foreground self-center" />
+                ) : error ? (
+                  <span className="text-sm text-red-500 self-center">
+                    Error loading
+                  </span>
+                ) : session?.user ? (
+                  <UserDropdown user={session.user} />
+                ) : (
+                  authNavLinks.map(({ href, label, variant }) => (
+                    <Link key={href} href={href}>
+                      <Button
+                        variant={variant === "ghost" ? "ghost" : "default"}
+                        className={`w-full justify-start ${
+                          variant === "default"
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                            : "text-foreground"
+                        }`}
+                      >
+                        {label}
+                      </Button>
+                    </Link>
+                  ))
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

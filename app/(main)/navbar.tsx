@@ -14,19 +14,47 @@ export async function Navbar() {
   return (
     <header className="bg-background border-b">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-2 font-semibold"
-        >
-          <Image
-            src={codingInFlowLogo}
-            alt="Coding in Flow logo"
-            width={32}
-            height={32}
-            className="border-muted rounded-full border"
-          />
-          Better-Auth Tutorial
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold"
+          >
+            <Image
+              src={codingInFlowLogo}
+              alt="AyuTrace Logo"
+              width={32}
+              height={32}
+              className="border-muted rounded-full border"
+            />
+            AyuTrace
+          </Link>
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/lab"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              Laboratory
+            </Link>
+            <Link
+              href="/collector"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              Collector
+            </Link>
+            <Link
+              href="/processor"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              Processor
+            </Link>
+            <Link
+              href="/consumer"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            >
+              Consumer
+            </Link>
+          </nav>
+        </div>
         <div className="flex items-center gap-2">
           <ModeToggle />
           <UserDropdown user={user} />
