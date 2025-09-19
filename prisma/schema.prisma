@@ -14,6 +14,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role{
+  FARMER
+  COLLECTOR
+  LAB
+  MANUFACTURER
+}
+
 model User {
   id            String    @id
   name          String
@@ -22,9 +29,12 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now()) @updatedAt
-  role          String?
+  role          Role
+  mspId         String? 
   sessions      Session[]
   accounts      Account[]
+  // Traceability relations
+  events        Event[]
 
   @@unique([email])
   @@map("user")
@@ -73,4 +83,68 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+
+model Batch {
+  id          String       @id @default(uuid())
+  productName String
+  species     String
+  qrToken     String       @unique
+  status      BatchStatus  @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  events      Event[]
+  scans       ConsumerScan[]
+}
+
+enum BatchStatus {
+  ACTIVE
+  REJECTED
+  RECALLED
+  COMPLETED
+}
+
+model Event {
+  id          String     @id @default(uuid())
+  eventType   EventType
+  batchId     String?
+  userId      String
+  payloadUrl  String?   // Off-chain storage
+  payloadHash String
+  metadata    Json
+  txId        String?   // Blockchain transaction
+  createdAt   DateTime  @default(now())
+
+  Batch       Batch?    @relation(fields: [batchId], references: [id])
+  User        User      @relation(fields: [userId], references: [id])
+  documents   Document[]
+}
+
+enum EventType {
+  COLLECTION
+  QUALITY_TEST
+  FORMULATION
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  eventId   String
+  url       String
+  hash      String
+  type      String
+  createdAt DateTime @default(now())
+
+  Event     Event    @relation(fields: [eventId], references: [id])
+}
+
+model ConsumerScan {
+  id        String   @id @default(uuid())
+  batchId   String
+  scannedAt DateTime @default(now())
+  device    String?
+  location  Json?
+
+  Batch     Batch    @relation(fields: [batchId], references: [id])
 }
