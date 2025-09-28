@@ -95,6 +95,10 @@ export function Sidebar() {
   const config = roleConfig[currentRole];
   const IconComponent = config.icon;
   if (pathname === "/dashboard") return null;
+  if (pathname === "/dashboard/farmer") setCurrentRole("farmer");
+  if (pathname === "/dashboard/collector") setCurrentRole("collector");
+  if (pathname === "/dashboard/lab") setCurrentRole("lab");
+  if (pathname === "/dashboard/manufacturer") setCurrentRole("manufacturer");
   return (
     <div
       className={cn(
