@@ -14,89 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role{
+enum Role {
+  NONE
   FARMER
   COLLECTOR
   LAB
   MANUFACTURER
-}
-
-model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  role          Role
-  mspId         String? 
-  sessions      Session[]
-  accounts      Account[]
-  // Traceability relations
-  events        Event[]
-
-  @@unique([email])
-  @@map("user")
-}
-
-model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([token])
-  @@map("session")
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-
-  @@map("verification")
-}
-
-
-model Batch {
-  id          String       @id @default(uuid())
-  productName String
-  species     String
-  qrToken     String       @unique
-  status      BatchStatus  @default(ACTIVE)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  events      Event[]
-  scans       ConsumerScan[]
 }
 
 enum BatchStatus {
@@ -106,27 +29,121 @@ enum BatchStatus {
   COMPLETED
 }
 
-model Event {
-  id          String     @id @default(uuid())
-  eventType   EventType
-  batchId     String?
-  userId      String
-  payloadUrl  String?   // Off-chain storage
-  payloadHash String
-  metadata    Json
-  txId        String?   // Blockchain transaction
-  createdAt   DateTime  @default(now())
-
-  Batch       Batch?    @relation(fields: [batchId], references: [id])
-  User        User      @relation(fields: [userId], references: [id])
-  documents   Document[]
-}
-
 enum EventType {
   COLLECTION
   QUALITY_TEST
+  PROCESSING_STEP
   FORMULATION
 }
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          Role      @default(NONE)
+  mspId         String?   // optional blockchain identity
+  organization  String?   // optional cooperative/farm group
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  // Relations
+  sessions      Session[]
+  accounts      Account[]
+  events        Event[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Account {
+  id                    String   @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @default(now()) @updatedAt
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+}
+
+model Batch {
+  id          String       @id @default(uuid())
+  productName String
+  species     String
+  qrToken     String       @unique
+  status      BatchStatus  @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+
+  events      Event[]
+  scans       ConsumerScan[]
+}
+
+model Event {
+  id              String     @id @default(uuid())
+  eventType       EventType
+  batchId         String?
+  userId          String
+  previousEventId String?
+  payloadUrl      String?
+  payloadHash     String
+  metadata        Json
+  txId            String?
+  latitude        Float?
+  longitude       Float?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @default(now()) @updatedAt
+
+  // Relations
+  Batch           Batch?     @relation(fields: [batchId], references: [id])
+  User            User       @relation(fields: [userId], references: [id])
+
+  // Self relation
+  previousEvent   Event?     @relation("EventChain", fields: [previousEventId], references: [id])
+  nextEvents      Event[]    @relation("EventChain")
+
+  documents       Document[]
+  labResults      LabResult[]   // <-- FIXED
+}
+
+model LabResult {
+  id          String   @id @default(uuid())
+  eventId     String
+  moisture    Float?
+  pesticide   String?
+  dnaVerified Boolean?
+  otherMetrics Json?
+  createdAt   DateTime @default(now())
+
+  Event       Event    @relation(fields: [eventId], references: [id])
+}
+
 
 model Document {
   id        String   @id @default(uuid())
@@ -142,6 +159,7 @@ model Document {
 model ConsumerScan {
   id        String   @id @default(uuid())
   batchId   String
+  userId    String?       // Optional, if consumer is logged in
   scannedAt DateTime @default(now())
   device    String?
   location  Json?

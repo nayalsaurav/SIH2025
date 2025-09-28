@@ -15,10 +15,7 @@ export async function Navbar() {
     <header className="bg-background border-b">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 font-semibold"
-          >
+          <Link href="/" className="flex items-center gap-2 font-semibold">
             <Image
               src={codingInFlowLogo}
               alt="AyuTrace Logo"
